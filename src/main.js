@@ -11,6 +11,7 @@ import App from './App'
 import router from './router'
 
 import './icons' // icon
+import './permission' // permission control
 import './mock' // simulation data
 
 import * as filters from './filters'
