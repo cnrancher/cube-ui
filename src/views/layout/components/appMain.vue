@@ -11,7 +11,14 @@
 export default {
   name: 'appMain',
   computed: {
-    return this.$route.fullPath
+    key () {
+      return this.$route.fullPath
+    }
   }
 }
 </script>
+<style rel="stylesheet/scss" lang="scss">
+.app-main {
+  margin: 24px 24px;
+}
+</style>

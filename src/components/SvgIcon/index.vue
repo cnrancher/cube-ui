@@ -7,11 +7,13 @@
 export default {
   name: 'svg-icon',
   props: {
-    type: String,
-    required: true
-  },
-  className: {
-    type: String
+    iconClass: {
+      type: String,
+      required: true
+    },
+    className: {
+      type: String
+    }
   },
   computed: {
     iconName () {

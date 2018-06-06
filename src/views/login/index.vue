@@ -7,10 +7,10 @@
       </div>
       <el-form ref="loginForm" :model="loginForm" label-position="top" class="login__form" :rules="loginRules">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="loginForm.username" type="text" placeholder="请输入用户名" autoComplete="on"></el-input>
+          <el-input v-model="loginForm.username" type="text" placeholder="请输入用户名" @keyup.enter.native="handleLogin" autoComplete="on"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" auto-complete="off"></el-input>
+          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" @keyup.enter.native="handleLogin" auto-complete="off"></el-input>
         </el-form-item>
         <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">登录</el-button>
       </el-form>
@@ -46,17 +46,12 @@ export default {
           this.loading = true
           const u = this.loginForm.username
           const p = this.loginForm.password
-          console.log(u)
-          console.log(p)
+
           loginByUsername(u, p).then(resp => {
-            console.log('success')
-            console.log(resp)
             this.loading = false
             setLogined()
             this.$router.push({ path: '/' })
           }).catch(error => {
-            console.log('error')
-            console.log(error)
             this.loading = false
             this.errorMessage = '登录失败：检查凭据，或者您的帐户可能无权登录。'
             console.log(error) // for debugs
@@ -79,7 +74,7 @@ export default {
     width: 100%;
   }
   .login__container {
-    max-width: 440px;
+    width: 300px;
     .el-form--label-top .el-form-item__label {
       padding: 0 0;
     }
