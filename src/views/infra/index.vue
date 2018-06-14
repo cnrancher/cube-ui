@@ -12,7 +12,7 @@ export default {
     return {
       infras: [],
       timer: null,
-      source: axios.CancelToken.source()
+      source: null
     }
   },
   computed: {
@@ -21,10 +21,25 @@ export default {
     }
   },
   created () {
+
+  },
+  activated () {
     this.loadData()
+    this.source = axios.CancelToken.source()
     this.pollInfras()
   },
+  deactivated () {
+    this.clearResource()
+  },
   methods: {
+    clearResource () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+        this.timer = null
+      }
+
+      this.source.cancel('Operation canceled.')
+    },
     loadData () {
       fetchList().then((resp) => {
         let data = resp.data.baseinfo
@@ -74,11 +89,7 @@ export default {
     }
   },
   beforeDestroy () {
-    if (this.timer) {
-      clearTimeout(this.timer)
-      this.timer = null
-    }
-    this.source.cancel('Operation canceled.')
+    this.clearResource()
   },
   components: {
     infraList
