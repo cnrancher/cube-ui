@@ -3,16 +3,18 @@
 </template>
 <script>
 import infraList from './components/infraList/index'
-import {fetchList, fetchState, deploy} from '@/api/infra'
+import {fetchList, fetchState, deploy, EVENT_SOURCE_URL} from '@/api/infra'
 import axios from 'axios'
-
+import {isTimeout} from '@/utils/auth'
+import {fedLogout} from '@/api/login'
 export default {
   name: 'infraContainer',
   data () {
     return {
       infras: [],
       timer: null,
-      source: null
+      source: null,
+      eventSource: null
     }
   },
   computed: {
@@ -20,16 +22,24 @@ export default {
       return this.infras.filter(item => item.status === 'True' && item.state !== 'Healthy')
     }
   },
-  created () {
-
-  },
   activated () {
-    this.loadData()
-    this.source = axios.CancelToken.source()
-    this.pollInfras()
+    if (typeof (EventSource) === 'undefined') {
+      this.source = axios.CancelToken.source()
+      this.loadData()
+      this.pollInfras()
+    } else {
+      this.initEventSource()
+    }
   },
   deactivated () {
-    this.clearResource()
+    if (typeof (EventSource) === 'undefined') {
+      this.clearResource()
+    }
+  },
+  beforeDestroy () {
+    if (typeof (EventSource) === 'undefined') {
+      this.clearResource()
+    }
   },
   methods: {
     clearResource () {
@@ -37,8 +47,24 @@ export default {
         clearTimeout(this.timer)
         this.timer = null
       }
-
       this.source.cancel('Operation canceled.')
+    },
+    initEventSource () {
+      this.eventSource = new EventSource(EVENT_SOURCE_URL)
+      this.eventSource.onmessage = (e) => {
+        let data = JSON.parse(e.data)
+        this.infras = data.baseinfo
+      }
+      this.eventSource.onerror = () => {
+        if (isTimeout()) {
+          fedLogout()
+        }
+      }
+    },
+    closeEventSource () {
+      if (this.eventSource) {
+        this.eventSource.close()
+      }
     },
     loadData () {
       fetchList().then((resp) => {
@@ -87,9 +113,6 @@ export default {
         }
       })
     }
-  },
-  beforeDestroy () {
-    this.clearResource()
   },
   components: {
     infraList
