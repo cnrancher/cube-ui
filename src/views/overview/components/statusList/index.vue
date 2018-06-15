@@ -1,6 +1,6 @@
 <template>
   <div class="overview-status-list">
-    <div class="overview-status-list__title">Status</div>
+    <div class="overview-status-list__title">{{$t('page.overview.statusTitle')}}</div>
     <div class="overview-status-list__content">
       <el-row>
         <el-col v-for="status in statuses" :key="status.selfLink" :xs="12" :sm="12" :md="6" :lg="6" :xl="8">

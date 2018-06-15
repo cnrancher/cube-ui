@@ -148,7 +148,7 @@ export default {
       resourceUsageList: []
     }
   },
-  created () {
+  activated () {
     this.loadData()
   },
   methods: {

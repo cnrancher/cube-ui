@@ -1,10 +1,10 @@
 import request from '@/utils/request'
-import {removeLoginStatus} from '@/utils/auth'
+import {removeLoginStatus, setLogined} from '@/utils/auth'
 export function loginByUsername (username, password) {
   const data = {
     providerType: 'local',
     responseType: 'cookie',
-    ttl: 30 * 60 * 1000,
+    ttl: 60 * 60 * 1000,
     username,
     password
   }
@@ -12,6 +12,9 @@ export function loginByUsername (username, password) {
     url: '/login',
     method: 'post',
     data
+  }).then((resp) => {
+    setLogined(new Date().getTime(), data.ttl)
+    return resp
   })
 }
 

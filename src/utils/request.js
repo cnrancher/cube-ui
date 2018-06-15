@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {Message, MessageBox} from 'element-ui'
 import {fedLogout} from '@/api/login'
+import {i18n} from '@/lang/i18n-setup'
 
 // create an axios instance
 const service = axios.create({
@@ -35,9 +36,9 @@ service.interceptors.response.use(
       switch (resp.status) {
         case 410:
         case 401:
-          MessageBox.confirm('会话超时，请重新登录', {
-            confirmButtonText: '登录',
-            cancelButtonText: '取消',
+          MessageBox.confirm(i18n.t('server.sessionTimeout'), {
+            confirmButtonText: i18n.t('action.confirm'),
+            cancelButtonText: i18n.t('action.cancel'),
             type: 'warning'
           }).then(() => {
             fedLogout()

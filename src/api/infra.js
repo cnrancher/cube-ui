@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+export const EVENT_SOURCE_URL = process.env.BASE_API + '/v1/baseinfos'
 
 export function fetchList () {
   return request({
