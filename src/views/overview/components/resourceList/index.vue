@@ -1,7 +1,7 @@
 <template>
 <div class="overview-resource-list">
   <div class="overview-resource-list__title">
-    Resource usage
+    {{$t('page.overview.resourceUsageTitle')}}
   </div>
   <div class="overview-resource-list__content">
     <el-row>

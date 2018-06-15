@@ -1,18 +1,18 @@
 <template>
   <div class="login">
     <div class="login__container">
-      <div class="login__title">
-        您好<br>
-        欢迎使用
+      <div class="login__title-container">
+        <div class="login__title">{{$t('page.login.title')}}</div>
+        <lang-select class="set-language"></lang-select>
       </div>
       <el-form ref="loginForm" :model="loginForm" label-position="top" class="login__form" :rules="loginRules">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="loginForm.username" type="text" placeholder="请输入用户名" @keyup.enter.native="handleLogin" autoComplete="on"></el-input>
+        <el-form-item :label="$t('entity.user.username')" prop="username">
+          <el-input v-model="loginForm.username" type="text" :placeholder="$t('placeholder.input', [$t('entity.user.username')])" @keyup.enter.native="handleLogin" autoComplete="on"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" @keyup.enter.native="handleLogin" auto-complete="off"></el-input>
+        <el-form-item :label="$t('entity.user.password')" prop="password">
+          <el-input type="password" v-model="loginForm.password" :placeholder="$t('placeholder.input', [$t('entity.user.password')])" @keyup.enter.native="handleLogin" auto-complete="off"></el-input>
         </el-form-item>
-        <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">登录</el-button>
+        <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('action.login')}}</el-button>
       </el-form>
       <div class="login__error" v-show="errorMessage">
         {{errorMessage}}
@@ -22,7 +22,7 @@
 </template>
 <script>
 import {loginByUsername} from '@/api/login'
-import {setLogined} from '@/utils/auth'
+import langSelect from '@/components/langSelect/index'
 export default {
   name: 'login',
   data () {
@@ -34,8 +34,8 @@ export default {
         password: ''
       },
       loginRules: {
-        username: [{required: true, trigger: 'blur', message: '用户名不能为空'}],
-        password: [{required: true, trigger: 'blur', message: '密码不能为空'}]
+        username: [{required: true, trigger: 'blur', message: this.$t('error.required', [this.$t('entity.user.username')])}],
+        password: [{required: true, trigger: 'blur', message: this.$t('error.required', [this.$t('entity.user.password')])}]
       }
     }
   },
@@ -49,11 +49,10 @@ export default {
 
           loginByUsername(u, p).then(resp => {
             this.loading = false
-            setLogined()
             this.$router.push({ path: '/' })
           }).catch(error => {
             this.loading = false
-            this.errorMessage = '登录失败：检查凭据，或者您的帐户可能无权登录。'
+            this.errorMessage = this.$t('message.loginError')
             console.log(error) // for debugs
           })
         } else {
@@ -61,6 +60,9 @@ export default {
         }
       })
     }
+  },
+  components: {
+    langSelect
   }
 }
 </script>
@@ -79,10 +81,24 @@ export default {
       padding: 0 0;
     }
   }
-  .login__title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #34495E;
-    text-align: center;
+  .login__title-container {
+    position: relative;
+    .login__title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #34495E;
+      text-align: center;
+    }
+    .set-language {
+      color: #34495E;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+    }
+  }
+
+  .login__error {
+    color: #f56c6c;
+    font-size: 12px;
   }
 </style>

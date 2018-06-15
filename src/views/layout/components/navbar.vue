@@ -1,8 +1,8 @@
 <template>
 <div class="navbar">
   <el-menu mode="horizontal" :default-active="$route.path" :router="true" background-color="#0075a8" text-color="#fff" active-text-color="#fff">
-    <custom-menu-item index="/overview">Overview</custom-menu-item>
-    <custom-menu-item index="/infra">Infra</custom-menu-item>
+    <custom-menu-item index="/overview">{{$t('entity.nav.overview')}}</custom-menu-item>
+    <custom-menu-item index="/infra">{{$t('entity.nav.infra')}}</custom-menu-item>
   </el-menu>
   <div class="navbar__right-menu">
     <el-dropdown class="avatar-container right-menu-item" trigger="click" @command="handleCommand">
@@ -12,7 +12,7 @@
         <i class="el-icon-caret-bottom"></i>
       </div>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="logout">Log Out</el-dropdown-item>
+        <el-dropdown-item command="logout">{{$t('action.logout')}}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -53,6 +53,8 @@ export default {
       switch (command) {
         case 'logout':
           logout().then(() => {
+            fedLogout()
+          }).catch(() => {
             fedLogout()
           })
           break
