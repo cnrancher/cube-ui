@@ -1,5 +1,5 @@
 <template>
-<div class="overview">
+<div class="overview" v-loading="loading">
   <status-list :statuses="statusList"></status-list>
   <resource-usage-list :usages="resourceUsageList"></resource-usage-list>
 </div>
@@ -7,7 +7,9 @@
 <script>
 import statusList from './components/statusList/index'
 import resourceUsageList from './components/resourceList/index'
-import {fetchList} from '@/api/cluster'
+import {EVENT_SOURCE_URL} from '@/api/cluster'
+import {isTimeout} from '@/utils/auth'
+import {fedLogout} from '@/api/login'
 const storageUnit = [
   {label: 'Ei', value: 1024 * 1024 * 1024 * 1024 * 1024 * 1024},
   {label: 'Pi', value: 1024 * 1024 * 1024 * 1024 * 1024},
@@ -104,38 +106,51 @@ const convertCPUFractionalToF = function (value) {
 }
 const resourceHandlerMap = {
   memory: {
-    detail (total, requested) {
-      let totalValue = formatStorageValue(total)
-      let requestedValue = formatStorageValue(requested, totalValue.unit)
-      return requestedValue.value + ' of ' + totalValue.value + ' ' + totalValue.unit + ' used'
-    },
     uniformUnit (total, requested) {
       return {
         total: convertStorageUnitToByte(total),
         used: convertStorageUnitToByte(requested)
       }
+    },
+    formatValue (total, requested) {
+      let totalValue = formatStorageValue(total)
+      let requestedValue = formatStorageValue(requested, totalValue.unit)
+      return {
+        total: totalValue.value,
+        used: requestedValue.value,
+        unit: totalValue.unit
+      }
     }
   },
   cpu: {
-    detail (total, requested) {
-      let totalValue = formatCPUFractional(total)
-      return formatCPUFractional(requested, totalValue.unit).value + ' of ' + totalValue.value + ' ' + totalValue.unit + ' used'
-    },
     uniformUnit (total, requested) {
       return {
         total: convertCPUFractionalToF(total),
         used: convertCPUFractionalToF(requested)
       }
+    },
+    formatValue (total, requested) {
+      let totalValue = formatCPUFractional(total)
+      let requestedValue = formatCPUFractional(requested, totalValue.unit)
+      return {
+        total: totalValue.value,
+        used: requestedValue.value,
+        unit: totalValue.unit
+      }
     }
   },
   default: {
-    detail (total, requested) {
-      return requested + ' of ' + total + ' used'
-    },
     uniformUnit (total, requested) {
       return {
         total: parseFloat(total, 10),
         used: parseFloat(requested, 10)
+      }
+    },
+    formatValue (total, requested) {
+      return {
+        total: total,
+        used: requested,
+        unit: ''
       }
     }
   }
@@ -144,17 +159,23 @@ export default {
   name: 'overviewContainer',
   data () {
     return {
+      loading: false,
       statusList: [],
       resourceUsageList: []
     }
   },
-  activated () {
-    this.loadData()
+  created () {
+    if (typeof (EventSource) !== 'undefined') {
+      this.initEventSource()
+    }
   },
   methods: {
-    loadData () {
-      fetchList().then((resp) => {
-        let data = resp.data.data
+    initEventSource () {
+      this.loading = true
+      this.eventSource = new EventSource(EVENT_SOURCE_URL)
+      this.eventSource.onmessage = (e) => {
+        this.loading = false
+        let data = JSON.parse(e.data).data
         if (data.length === 0) {
           return
         }
@@ -170,19 +191,26 @@ export default {
             h = resourceHandlerMap['default']
           }
           let temp = h.uniformUnit(item[1], requestedResource[item[0]])
-
+          let valueFormated = h.formatValue(item[1], requestedResource[item[0]])
           return {
             id: item[0] + '_' + index,
             total: temp.total,
             used: temp.used,
-            name: item[0].toUpperCase(),
-            detail: h.detail(item[1], requestedResource[item[0]])
+            name: item[0],
+            totalFormated: valueFormated.total,
+            usedFormated: valueFormated.used,
+            unit: valueFormated.unit
           }
         })
-
         this.statusList = this.processEtcdStatus(statuses)
         this.resourceUsageList = usages
-      })
+      }
+      this.eventSource.onerror = () => {
+        this.loading = false
+        if (isTimeout()) {
+          fedLogout()
+        }
+      }
     },
     processEtcdStatus (statuses) {
       let etcdReg = /^etcd-\d+$/

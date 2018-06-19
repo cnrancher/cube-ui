@@ -27,6 +27,9 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+.overview-status-list__content {
+  min-height: 52px;
+}
 .overview-status-list__title {
   font-size: 21px;
   color: #34495E;

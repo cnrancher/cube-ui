@@ -36,7 +36,14 @@ export default {
       },
       overview: {
         statusTitle: 'Status',
-        resourceUsageTitle: 'Resource Usage'
+        resourceUsageTitle: 'Resource Usage',
+        cpu: 'CPU',
+        memory: 'Memory',
+        pods: 'Pods',
+        etcd: 'Etcd',
+        scheduler: 'Scheduler',
+        controllerManager: 'Controller Manager',
+        subtitle: '已用{total}中的{used}'
       },
       infra: {
       }
