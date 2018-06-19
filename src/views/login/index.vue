@@ -39,6 +39,11 @@ export default {
       }
     }
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.loading = false
+    })
+  },
   methods: {
     handleLogin () {
       this.$refs.loginForm.validate(valid => {
@@ -48,7 +53,6 @@ export default {
           const p = this.loginForm.password
 
           loginByUsername(u, p).then(resp => {
-            this.loading = false
             this.$router.push({ path: '/' })
           }).catch(error => {
             this.loading = false
