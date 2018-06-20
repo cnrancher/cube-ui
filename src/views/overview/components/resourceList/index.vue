@@ -6,7 +6,7 @@
   <div class="overview-resource-list__content">
     <el-row>
       <el-col v-for="u in usages" :key="u.id" :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
-        <usage ref="chart"  :total="u.total" :used="u.used" :name="u.name" :detail="u.detail"></usage>
+        <usage ref="chart"  :total="u.total" :used="u.used" :name="u.name" :total-formated="u.totalFormated" :used-formated="u.usedFormated" :unit="u.unit"></usage>
       </el-col>
     </el-row>
 

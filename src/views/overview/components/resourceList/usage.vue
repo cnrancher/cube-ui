@@ -89,9 +89,17 @@ export default {
       type: String,
       required: true
     },
-    detail: {
+    totalFormated: {
+      type: [String, Number],
+      required: true
+    },
+    usedFormated: {
+      type: [String, Number],
+      required: true
+    },
+    unit: {
       type: String,
-      default: ''
+      required: true
     }
   },
   computed: {
@@ -113,7 +121,7 @@ export default {
       opt.series[0].axisLine.lineStyle.color[0][1] = this.detectionData(p)
       let detail = [
         '{percent|' + p + '%}',
-        '{name|' + this.name + '}',
+        '{name|' + this.$t('page.overview.' + this.name) + '}',
         '{detail|' + this.detail + '}'
       ].join('\n')
       opt.series[0].detail.formatter = (value) => {
@@ -130,6 +138,9 @@ export default {
       chartDetail.rich.name.lineHeight = 40 * this.ratio
       chartDetail.rich.detail.fontSize = 20 * this.ratio
       return opt
+    },
+    detail () {
+      return this.$t('page.overview.subtitle', {total: this.totalFormated + this.unit, used: this.usedFormated})
     }
   },
   methods: {
