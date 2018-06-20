@@ -19,8 +19,8 @@ export default {
     },
     entity: {
       nav: {
-        overview: 'Overview',
-        infra: 'Infra'
+        overview: '系统概览',
+        infra: '基础设施'
       },
       user: {
         username: '用户名',
@@ -35,8 +35,8 @@ export default {
         title: '欢迎使用'
       },
       overview: {
-        statusTitle: 'Status',
-        resourceUsageTitle: 'Resource Usage',
+        statusTitle: '服务状态',
+        resourceUsageTitle: '资源使用',
         cpu: 'CPU',
         memory: 'Memory',
         pods: 'Pods',
