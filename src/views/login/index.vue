@@ -78,9 +78,13 @@ export default {
     align-items: center;
     justify-content: center;
     width: 100%;
+    background: url(../../assets/login-container-farm.svg) center center no-repeat fixed;
+    background-size: cover;
   }
   .login__container {
-    width: 300px;
+    width: 400px;
+    padding: 40px 80px;
+    background-color: white;
     .el-form--label-top .el-form-item__label {
       padding: 0 0;
     }
@@ -105,4 +109,5 @@ export default {
     color: #f56c6c;
     font-size: 12px;
   }
+
 </style>
