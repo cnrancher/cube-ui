@@ -1,6 +1,6 @@
 # cube-ui-project
 
-> cnrancher cube ui project
+> RancherCube
 
 ## Build Setup
 
